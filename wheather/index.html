@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+
+    <style>
+        body{
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #1a1a1a;
+           display: flex;
+           align-items: center;
+           justify-content: center;
+           flex-direction: column;
+           color: whitesmoke;
+
+        }
+        nav{
+            width: 100vw;
+            height: 40px;
+            border: 1px solid white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bolder;
+            font-size: 40px;
+            position: relative;
+            z-index: auto;
+            &:hover{
+                flex-direction: row-reverse;
+            }
+            
+            .cloud{
+                position: absolute;
+                width: 200px;
+                height: 40px;
+                background-color: #e8a319;
+                clip-path: path("M50,100 C30,90 30,60 50,50 C40,30 60,10 80,30 C100,0 140,0 150,30 C170,10 200,30 190,60 C210,60 210,90 190,100 Z");
+                right: 00px;
+                z-index: -10;
+                }
+            .cloud2{
+                position: absolute;
+                width: 200px;
+                height: 40px;
+                background-color: #e3e39f;
+                clip-path: path("M50,100 C30,90 30,60 50,50 C40,30 60,10 80,30 C100,0 140,0 150,30 C170,10 200,30 190,60 C210,60 210,90 190,100 Z");
+                left: 00px;
+                z-index: -11;
+                }
+            .title{
+                
+                z-index: 11;
+            }
+        }
+
+        .search{
+            width: 200px;
+            aspect-ratio: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            /* border: 1px solid; */
+            border-radius: 50%;
+            background-color: #f3cd35;
+            margin-top: 40px;
+            box-shadow: #e3e39f 10px 3px 100px;
+
+
+            input{
+                border-radius: 5px;
+                margin: 5px;
+                background-color: #d3ee72c1;
+                color: black;
+            }
+            button{
+                border-radius: 7px;
+                box-shadow: black 2px 1px 3px;
+                background-color: #6dd85a;
+                &:hover{
+                    background-color: #49903d;
+
+                }
+            }
+
+        }
+    </style>
+
+</head>
+
+<body>
+    <nav>
+        <div>
+            <div class="cloud"></div>
+            <div class="cloud2"></div>
+            <div class="title">wheather</div>
+        </div>
+
+    </nav>
+
+    <div class="search">
+        <div class="box1"></div>
+        <div class="box2"></div>
+        <input onkeyup="search()" placeholder="Enter city name"  id="input" type="text">
+        <button onclick="search()">search</button>
+    </div>
+
+    <div class="main"style="margin: 20%;">
+
+    </div>
+    
+
+
+    
+    <script>
+        //         "current": {
+        //     "time": "2025-06-28T09:15",
+        //     "interval": 900,
+        //     "temperature_2m": 29.0,
+        //     "wind_speed_10m": 14.8
+        //   },
+        input = document.getElementById('input')
+       let main = document.querySelector('.main')
+       
+
+        async function search() {
+            console.log(input.value)
+            main.innerHTML = `<h1 style="color:white;">wait loading....</h1>`
+            let cord = await fetch(`https://nominatim.openstreetmap.org/search?q=${input.value}&format=json`)
+            cord = await cord.json()
+
+            let forecast = await fetch(`https://api.open-meteo.com/v1/forecast?latitude=${cord[0]['lat']}&longitude=${cord[0]['lon']}&current=temperature_2m,wind_speed_10m&hourly=temperature_2m,relative_humidity_2m,wind_speed_10m`)
+
+            forecast = await forecast.json()
+           main.innerHTML =  `<div>
+            <h1>${input.value}</h1>
+            <div>temperature :${forecast['current']['temperature_2m']}</div>
+            <div>interval :${forecast['current']['interval']}</div>
+            <div>wind speed  : ${forecast['current']['wind_speed_10m']} </div>
+            <div>time : ${forecast['current']['time']} </div>
+            
+        </div>`
+           
+
+
+
+
+        }
+    </script>
+</body>
+
+</html>
